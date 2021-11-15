@@ -1,0 +1,24 @@
+name: "Build plugin"
+description: "Builds an ÖbEngine plugin"
+inputs:
+  obengineVersion:
+    description: "ÖbEngine version used to build the plugin (can be a commit reference or a tag)"
+    required: true
+  buildDebug:
+    description: "Whether to build the Debug version of the plugin or not"
+    required: true
+    default: true
+  buildRelease:
+    description: "Whether to build the Release version of the plugin or not"
+    required: true
+    default: true
+  releaseAs:
+    description: "Name of the release, use false to disable artifact release"
+    required: true
+outputs:
+  releaseLink: 
+    description: "Link to the release"
+    value: ${{ steps.random-number-generator.outputs.filesNo }}
+runs:
+  using: "composite"
+  steps: []
