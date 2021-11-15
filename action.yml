@@ -1,5 +1,5 @@
-name: "Build plugin"
-description: "Builds an ÖbEngine plugin"
+name: "Build ObEngine plugin"
+description: "Build and release an ÖbEngine plugin"
 inputs:
   obengineVersion:
     description: "ÖbEngine version used to build the plugin (can be a commit reference or a tag)"
@@ -21,4 +21,50 @@ outputs:
     value: ${{ steps.random-number-generator.outputs.filesNo }}
 runs:
   using: "composite"
-  steps: []
+  steps:
+    - name: "Cloning plugin repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Clean ObEngine submodule
+      run: rm -rf ObEngine
+    - name: "Cloning ObEngine repository"
+      uses: actions/checkout@v2
+      with:
+        repository: 'ObEngine/ObEngine'
+        fetch-depth: 0
+        ref: ${{ inputs.obengineVersion }}
+        path: "ObEngine"
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Install dependencies [MacOS]
+      run: brew install sfml
+      if: runner.os == 'macOS'
+    - name: Install dependencies [Linux]
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential g++ git libasound2 alsa-utils alsa-oss libasound2-dev
+        sudo apt-get install -y libfreetype6-dev libxrandr-dev libudev-dev libogg-dev libflac-dev libvorbis-dev libopenal-dev libgl1-mesa-dev
+        git clone --branch 2.5.1 --depth 1 http://github.com/SFML/SFML.git
+        cd SFML; cmake .; make -j8; sudo make install
+      if: runner.os == 'Linux'
+    - name: Install dependencies [Windows]
+      run: |
+        mkdir deps
+        cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
+        Expand-Archive -LiteralPath SFML-2.5.1.zip -DestinationPath .
+      shell: pwsh
+
+    - name: Prepare compilation [MacOS|Linux]
+      run: cd build && cmake -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF -DBUILD_PLAYER=OFF ..
+      if: runner.os == 'macOS' || runner.os == 'Linux'
+    - name: Prepare compilation [Windows]
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF ..
+      shell: pwsh
+ 
+    - name: Compile ObEngine plugin [MacOS|Linux]
+      run: cd build && make -j8
+      if: runner.os == 'macOS' || runner.os == 'Linux'
+    - name: Compile ObEngine plugin [Windows]
+      run: cmake --build build --config Debug -- /m:8
