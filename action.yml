@@ -59,6 +59,7 @@ runs:
         cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
         Expand-Archive -LiteralPath SFML-2.5.1.zip -DestinationPath .
       shell: pwsh
+      if: runner.os == 'Windows'
 
     - name: Prepare compilation [MacOS|Linux]
       run: cd build && cmake -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF -DBUILD_PLAYER=OFF ..
@@ -67,6 +68,7 @@ runs:
     - name: Prepare compilation [Windows]
       run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF ..
       shell: pwsh
+      if: runner.os == 'Windows'
  
     - name: Compile ObEngine plugin [MacOS|Linux]
       run: cd build && make -j8
@@ -75,3 +77,4 @@ runs:
     - name: Compile ObEngine plugin [Windows]
       shell: pwsh
       run: cmake --build build --config Debug -- /m:8
+      if: runner.os == 'Windows'
