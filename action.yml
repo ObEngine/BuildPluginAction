@@ -66,7 +66,7 @@ runs:
       shell: bash
       if: runner.os == 'macOS' || runner.os == 'Linux'
     - name: Prepare compilation [Windows]
-      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF ..
+      run: cd build; cmake -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF ..
       shell: pwsh
       if: runner.os == 'Windows'
  
