@@ -16,9 +16,9 @@ inputs:
     description: "Name of the release, use false to disable artifact release"
     required: true
 outputs:
-  releaseLink: 
-    description: "Link to the release"
-    value: ${{ steps.random-number-generator.outputs.filesNo }}
+  pluginLocation: 
+    description: "Path to the plugin"
+    value: ${{ steps.get_plugin_location.outputs.plugin_location }}
 runs:
   using: "composite"
   steps:
