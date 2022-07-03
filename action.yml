@@ -78,3 +78,13 @@ runs:
       shell: pwsh
       run: cmake --build build --config Debug -- /m:8
       if: runner.os == 'Windows'
+
+    - name: Retrieve plugin location [MacOS|Linux]
+      id: get_plugin_location
+      run: echo "::set-output name=plugin_location::$(cat build/plugin_location | xargs)"
+      if: runner.os == 'macOS' || runner.os == 'Linux'
+    - name: Retrieve plugin location [Windows]
+      id: get_plugin_location
+      run: $plugin_location = (Get-Content .\plugin_location).Trim(); Write-Output "::set-output name=plugin_location::$plugin_location"
+      shell: pwsh
+      if: runner.os == 'Windows'
