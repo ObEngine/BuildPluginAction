@@ -62,11 +62,11 @@ runs:
       if: runner.os == 'Windows'
 
     - name: Prepare compilation [MacOS|Linux]
-      run: cd build && cmake -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF -DBUILD_PLAYER=OFF ..
+      run: cd build && cmake -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF -DBUILD_PLAYER=OFF -DCMAKE_BUILD_TYPE=Release ..
       shell: bash
       if: runner.os == 'macOS' || runner.os == 'Linux'
     - name: Prepare compilation [Windows]
-      run: cd build; cmake -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF -DBUILD_PLAYER=OFF ..
+      run: cd build; cmake -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=OFF -DBUILD_TOOLKIT=OFF -DBUILD_PLAYER=OFF -DCMAKE_BUILD_TYPE=Release ..
       shell: pwsh
       if: runner.os == 'Windows'
  
